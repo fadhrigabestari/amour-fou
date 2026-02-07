@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com");
 @import "tailwindcss";
 
 :root {
@@ -10,6 +11,11 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-pacifico: 'Pacifico', cursive;
+  --font-lobster: 'Lobster', cursive;
+  --font-playfair: 'Playfair Display', serif;
+  --font-imperial: 'Imperial Script', cursive;
+  --font-great-vibes: 'Great Vibes', cursive;
 }
 
 @media (prefers-color-scheme: dark) {

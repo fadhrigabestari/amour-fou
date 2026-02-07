@@ -1,21 +1,15 @@
-import Image from "next/image";
 import Link from "next/link";
 import NavLink from "./NavLink";
 
 export default function Header() {
   return (
-    <nav className="sticky top-0 z-50 border-b border-rose-200 bg-white/80 backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-900/80">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2D5016]/20 bg-black/75 backdrop-blur-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center">
-            <Image
-              src="/globe.svg"
-              alt="Amour Fou"
-              width={120}
-              height={40}
-              className="h-10 w-auto"
-              priority
-            />
+            <span className="font-great-vibes text-2xl font-bold text-white">
+              A<span className="text-lg">&</span>F
+            </span>
           </Link>
           <div className="flex gap-6">
             <NavLink href="/">Home</NavLink>
