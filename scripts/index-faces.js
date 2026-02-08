@@ -1,33 +1,16 @@
-const { RekognitionClient, IndexFacesCommand } = require("@aws-sdk/client-rekognition");
-const { S3Client, ListObjectsV2Command } = require("@aws-sdk/client-s3");
+const { IndexFacesCommand } = require("@aws-sdk/client-rekognition");
+const { ListObjectsV2Command } = require("@aws-sdk/client-s3");
+const { s3Client, rekognitionClient } = require("../src/lib/aws-config");
 require('dotenv').config({ path: '.env.local' });
 
 const AWS_REGION = process.env.AWS_REGION?.trim();
-const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID?.trim();
-const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY?.trim();
 const BUCKET_NAME = process.env.AWS_S3_BUCKET?.trim();
 const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID?.trim();
 
-if (!AWS_REGION || !AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BUCKET_NAME || !COLLECTION_ID) {
-  console.error("Missing required environment variables. Check your .env.local file.");
+if (!AWS_REGION || !BUCKET_NAME || !COLLECTION_ID) {
+  console.error("Missing required environment variables");
   process.exit(1);
 }
-
-const rekognitionClient = new RekognitionClient({
-  region: AWS_REGION,
-  credentials: {
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  },
-});
-
-const s3Client = new S3Client({
-  region: AWS_REGION,
-  credentials: {
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  },
-});
 
 async function getAllImages(prefix) {
   const images = [];

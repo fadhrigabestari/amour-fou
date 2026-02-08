@@ -1,18 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  RekognitionClient,
-  SearchFacesByImageCommand,
-} from "@aws-sdk/client-rekognition";
+import { SearchFacesByImageCommand } from "@aws-sdk/client-rekognition";
+import { rekognitionClient } from "@/lib/aws-config";
 
-const rekognitionClient = new RekognitionClient({
-  region: process.env.AWS_REGION || "ap-southeast-1",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-  },
-});
-
-const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "wedding-faces";
+const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "amour-fou-gallery";
 const CLOUDFRONT_URL = process.env.NEXT_PUBLIC_CLOUDFRONT_URL || "";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png"];

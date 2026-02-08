@@ -1,0 +1,42 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          AWS_S3_BUCKET: ${{ vars.AWS_S3_BUCKET }}
+          AWS_REKOGNITION_COLLECTION_ID: ${{ vars.AWS_REKOGNITION_COLLECTION_ID }}
+          NEXT_PUBLIC_CLOUDFRONT_URL: ${{ vars.PUBLIC_CLOUDFRONT_URL }}
+
+      - name: Build Docker image (test)
+        run: |
+          docker build \
+            --build-arg NODE_OPTIONS="--max-old-space-size=4096" \
+            -t amour-fou:test \
+            .
