@@ -116,7 +116,7 @@ export default function Pictures() {
   const [isMounted, setIsMounted] = useState(false);
   const [collageLayout, setCollageLayout] = useState<ReturnType<typeof generateCollageLayout>>([]);
   const [allPhotos, setAllPhotos] = useState<Photo[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -140,13 +140,15 @@ export default function Pictures() {
         setIsMounted(true);
       } catch (error) {
         console.error("Failed to load photos");
-      } finally {
-        setIsLoading(false);
       }
     };
 
     fetchPhotos();
   }, []);
+
+  const handleImageLoad = (src: string) => {
+    setLoadedImages(prev => new Set(prev).add(src));
+  };
 
   const openLightbox = (index: number) => {
     if (index >= 0 && index < allPhotos.length) {
@@ -202,7 +204,7 @@ export default function Pictures() {
     return { top: `${topOffset}px`, left: `${leftOffset}px` };
   };
 
-  if (!isMounted || collageLayout.length === 0 || isLoading) {
+  if (!isMounted || collageLayout.length === 0) {
     return (
       <div className="h-screen bg-rose-50 dark:bg-zinc-900">
         <Header />
@@ -221,7 +223,7 @@ export default function Pictures() {
         <div className="relative h-full w-full overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="collage-wrapper">
-              {Array.from({ length: 4 }).map((_, sectionIdx) => (
+              {Array.from({ length: 8 }).map((_, sectionIdx) => (
                 <div
                   key={sectionIdx}
                   className="relative h-full w-[1536px] shrink-0"
@@ -231,6 +233,7 @@ export default function Pictures() {
                     if (!photo) return null;
                     
                     const position = getPosition(item.row, item.col);
+                    const isLoaded = loadedImages.has(photo.src);
                     
                     return (
                       <div
@@ -238,12 +241,14 @@ export default function Pictures() {
                         className={getSizeClasses(item.size)}
                         style={position}
                       >
+                        <div className={`absolute inset-0 bg-[#9CAF88] transition-opacity duration-500 ${isLoaded ? 'opacity-0' : 'opacity-100 shimmer'}`} />
                         <Image
-                          className="h-full w-full object-cover"
+                          className={`h-full w-full object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                           src={photo.src}
                           alt={photo.alt}
                           fill
                           sizes="(max-width: 256px) 128px, 256px"
+                          onLoad={() => handleImageLoad(photo.src)}
                         />
                       </div>
                     );
@@ -290,13 +295,19 @@ export default function Pictures() {
           </button>
 
           <div className="relative h-[80vh] w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
+            {!loadedImages.has(allPhotos[selectedImage].src) && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+              </div>
+            )}
             <Image
-              className="object-contain"
+              className={`object-contain transition-opacity duration-300 ${loadedImages.has(allPhotos[selectedImage].src) ? 'opacity-100' : 'opacity-0'}`}
               src={allPhotos[selectedImage].src}
               alt={allPhotos[selectedImage].alt}
               fill
               sizes="100vw"
               priority
+              onLoad={() => handleImageLoad(allPhotos[selectedImage].src)}
             />
           </div>
 
@@ -324,14 +335,34 @@ export default function Pictures() {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-4608px);
+            transform: translateX(-9216px);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: -200% 0;
+          }
+          100% {
+            background-position: 200% 0;
           }
         }
 
         .collage-wrapper {
           display: flex;
           position: absolute;
-          animation: scroll-collage 180s linear infinite;
+          animation: scroll-collage 360s linear infinite;
+        }
+
+        .shimmer {
+          background: linear-gradient(
+            90deg,
+            #9CAF88 0%,
+            #B8C9A4 50%,
+            #9CAF88 100%
+          );
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite;
         }
       `}</style>
     </div>

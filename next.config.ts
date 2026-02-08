@@ -4,8 +4,8 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'amour-fou-bucket.s3.ap-southeast-1.amazonaws.com',
+        protocol: "https",
+        hostname: "d8guwbw7auosl.cloudfront.net",
       },
     ],
   },

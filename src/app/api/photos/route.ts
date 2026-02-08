@@ -10,7 +10,6 @@ const s3Client = new S3Client({
 });
 
 const BUCKET_NAME = process.env.AWS_S3_BUCKET || "";
-const S3_BASE_URL = `https://${BUCKET_NAME}.s3.${process.env.AWS_REGION || "ap-southeast-1"}.amazonaws.com`;
 
 export async function GET() {
   try {
@@ -33,7 +32,7 @@ export async function GET() {
       landscapeData.Contents?.filter((item) =>
         /\.(jpg|jpeg|png|webp)$/i.test(item.Key || "")
       ).map((item) => ({
-        src: `${S3_BASE_URL}/${item.Key}`,
+        src: `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${item.Key}`,
         alt: `Adristi and Fadhriga landscape`,
         orientation: "landscape",
       })) || [];
@@ -42,7 +41,7 @@ export async function GET() {
       portraitData.Contents?.filter((item) =>
         /\.(jpg|jpeg|png|webp)$/i.test(item.Key || "")
       ).map((item) => ({
-        src: `${S3_BASE_URL}/${item.Key}`,
+        src: `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${item.Key}`,
         alt: `Adristi and Fadhriga portrait`,
         orientation: "portrait",
       })) || [];
@@ -52,6 +51,7 @@ export async function GET() {
       portrait: portraitPhotos,
     });
   } catch (error) {
+    console.error("Failed to fetch photos:", error);
     return NextResponse.json(
       { error: "Failed to fetch photos" },
       { status: 500 }
