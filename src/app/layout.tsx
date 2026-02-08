@@ -10,8 +10,11 @@ const pacifico = Pacifico({ weight: "400", subsets: ["latin"], variable: "--font
 const lobster = Lobster({ weight: "400", subsets: ["latin"], variable: "--font-lobster" });
 
 export const metadata: Metadata = {
-  title: "Adristi & Fadhriga Wedding",
+  title: "Adristi & Fadhriga",
   description: "Join us as we celebrate our love",
+  icons: {
+    icon: '/love-icon.svg',
+  },
 };
 
 export default function RootLayout({

@@ -180,7 +180,7 @@ export default function Pictures() {
     return (
       <div className="h-screen bg-rose-50 dark:bg-zinc-900">
         <Header />
-        <main className="h-[calc(100vh-4rem)]">
+        <main className="h-screen">
           <div className="relative h-full w-full overflow-hidden bg-slate-700" />
         </main>
       </div>
@@ -191,7 +191,7 @@ export default function Pictures() {
     <div className="h-screen bg-rose-50 dark:bg-zinc-900">
       <Header />
 
-      <main className="h-[calc(100vh-4rem)]">
+      <main className="h-screen">
         <div className="relative h-full w-full overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="collage-wrapper">
