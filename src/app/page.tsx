@@ -126,6 +126,9 @@ export default function Home() {
   const [collageLayout, setCollageLayout] = useState<ReturnType<typeof generateCollageLayout>>([]);
   const [allPhotos, setAllPhotos] = useState<Photo[]>([]);
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
+  const [brideLoaded, setBrideLoaded] = useState(false);
+  const [groomLoaded, setGroomLoaded] = useState(false);
 
   useEffect(() => {
     const targetDate = new Date("2026-02-14T15:30:00").getTime();
@@ -169,8 +172,8 @@ export default function Home() {
         
         setAllPhotos(photos);
         setCollageLayout(generateCollageLayout(landscape.length, portrait.length));
-      } catch (error) {
-        console.error("Failed to load photos");
+      } catch {
+        return;
       }
     };
 
@@ -331,12 +334,14 @@ export default function Home() {
       <main>
         <section id="home" className="relative h-screen">
           <div className="absolute inset-0">
+            <div className={`absolute inset-0 bg-[#9CAF88] transition-opacity duration-500 ${backgroundLoaded ? 'opacity-0' : 'opacity-100 shimmer'}`} />
             <Image
-              className="object-cover object-bottom"
+              className={`object-cover object-bottom transition-opacity duration-500 ${backgroundLoaded ? 'opacity-100' : 'opacity-0'}`}
               src={`${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/home/background.JPG`}
               alt="Adristi and Fadhriga"
               fill
               priority
+              onLoad={() => setBackgroundLoaded(true)}
             />
           </div>
           
@@ -430,11 +435,13 @@ export default function Home() {
                 <div className="relative mx-auto mb-2 h-72 w-72 sm:h-80 sm:w-80 md:h-96 md:w-96">
                   <div className="absolute inset-0 flex items-center justify-center p-6 z-0 sm:p-8">
                     <div className="relative h-full w-full overflow-hidden rounded-full">
+                      <div className={`absolute inset-0 bg-[#9CAF88] transition-opacity duration-500 ${brideLoaded ? 'opacity-0' : 'opacity-100 shimmer'}`} />
                       <Image
                         src={`${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/home/bride.jpeg`}
                         alt="Adristi"
                         fill
-                        className="object-cover object-top"
+                        className={`object-cover object-top transition-opacity duration-500 ${brideLoaded ? 'opacity-100' : 'opacity-0'}`}
+                        onLoad={() => setBrideLoaded(true)}
                       />
                     </div>
                   </div>
@@ -457,11 +464,13 @@ export default function Home() {
                 <div className="relative mx-auto mb-2 h-72 w-72 sm:h-80 sm:w-80 md:h-96 md:w-96">
                   <div className="absolute inset-0 flex items-center justify-center p-6 z-0 sm:p-8">
                     <div className="relative h-full w-full overflow-hidden rounded-full">
+                      <div className={`absolute inset-0 bg-[#9CAF88] transition-opacity duration-500 ${groomLoaded ? 'opacity-0' : 'opacity-100 shimmer'}`} />
                       <Image
                         src={`${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/home/groom.JPG`}
                         alt="Fadhriga"
                         fill
-                        className="object-cover object-bottom scale-300"
+                        className={`object-cover object-bottom scale-300 transition-opacity duration-500 ${groomLoaded ? 'opacity-100' : 'opacity-0'}`}
+                        onLoad={() => setGroomLoaded(true)}
                       />
                     </div>
                   </div>
