@@ -136,7 +136,7 @@ export default function Home() {
           <div className="absolute inset-0">
             <Image
               className="object-cover object-bottom"
-              src="/img/prewed/landscape/prewed-7.JPG"
+              src="https://amour-fou-bucket.s3.ap-southeast-1.amazonaws.com/home/background.JPG"
               alt="Adristi and Fadhriga"
               fill
               priority
@@ -186,10 +186,10 @@ export default function Home() {
                   <div className="absolute inset-0 flex items-center justify-center p-6 z-0 sm:p-8">
                     <div className="relative h-full w-full overflow-hidden rounded-full">
                       <Image
-                        src="/img/prewed/portrait/prewed-27.JPG"
+                        src="https://amour-fou-bucket.s3.ap-southeast-1.amazonaws.com/home/bride.jpeg"
                         alt="Adristi"
                         fill
-                        className="object-cover object-[35%_85%]"
+                        className="object-cover object-top"
                       />
                     </div>
                   </div>
@@ -213,10 +213,10 @@ export default function Home() {
                   <div className="absolute inset-0 flex items-center justify-center p-6 z-0 sm:p-8">
                     <div className="relative h-full w-full overflow-hidden rounded-full">
                       <Image
-                        src="/img/prewed/portrait/prewed-2.JPG"
+                        src="https://amour-fou-bucket.s3.ap-southeast-1.amazonaws.com/home/groom.JPG"
                         alt="Fadhriga"
                         fill
-                        className="object-cover object-bottom scale-180"
+                        className="object-cover object-bottom scale-300"
                       />
                     </div>
                   </div>

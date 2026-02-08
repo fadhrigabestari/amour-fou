@@ -1,8 +1,16 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'amour-fou-bucket.s3.ap-southeast-1.amazonaws.com',
+        port: '',
+        pathname: '/home/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
