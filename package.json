@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "index-faces": "node scripts/index-faces.js"
   },
   "dependencies": {
+    "@aws-sdk/client-rekognition": "^3.985.0",
     "@aws-sdk/client-s3": "^3.985.0",
+    "dotenv": "^17.2.4",
     "next": "16.1.6",
     "postcss": "^8.5.6",
     "react": "19.2.3",
