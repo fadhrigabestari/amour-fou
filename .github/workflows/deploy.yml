@@ -26,7 +26,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_DEPLOY_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_DEPLOY_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -39,6 +39,7 @@ jobs:
         run: |
           docker build \
             --build-arg NODE_OPTIONS="--max-old-space-size=4096" \
+            --build-arg NEXT_PUBLIC_CLOUDFRONT_URL="${{ vars.PUBLIC_CLOUDFRONT_URL }}" \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
             .
@@ -58,7 +59,7 @@ jobs:
         run: |
           jq --arg image "${{ steps.build-image.outputs.image }}" \
              --arg cloudfront "${{ vars.PUBLIC_CLOUDFRONT_URL }}" \
-             --arg region "${{ vars.AWS_REGION }}" \
+             --arg region "${{ env.AWS_REGION }}" \
              --arg bucket "${{ vars.AWS_S3_BUCKET }}" \
              --arg collectionId "${{ vars.AWS_REKOGNITION_COLLECTION_ID }}" \
              '
@@ -67,7 +68,7 @@ jobs:
                {name: "NODE_ENV", value: "production"},
                {name: "NEXT_PUBLIC_CLOUDFRONT_URL", value: $cloudfront},
                {name: "AWS_REGION", value: $region},
-               {name: "AWS_S3_BUCKET", value: $bucket},
+               {name: "S3_BUCKET_NAME", value: $bucket},
                {name: "AWS_REKOGNITION_COLLECTION_ID", value: $collectionId}
              ] |
              del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)
