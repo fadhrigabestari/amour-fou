@@ -2,7 +2,7 @@ import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { s3Client } from "../../../lib/aws-config";
 
-const BUCKET_NAME = process.env.AWS_S3_BUCKET || "";
+const BUCKET_NAME = process.env.AWS_S3_BUCKET || "amour-fou-bucket";
 
 export async function GET() {
   try {

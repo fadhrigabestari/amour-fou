@@ -68,7 +68,7 @@ jobs:
                {name: "NODE_ENV", value: "production"},
                {name: "NEXT_PUBLIC_CLOUDFRONT_URL", value: $cloudfront},
                {name: "AWS_REGION", value: $region},
-               {name: "S3_BUCKET_NAME", value: $bucket},
+               {name: "AWS_S3_BUCKET", value: $bucket},
                {name: "AWS_REKOGNITION_COLLECTION_ID", value: $collectionId}
              ] |
              del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)
