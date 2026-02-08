@@ -6,8 +6,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'amour-fou-bucket.s3.ap-southeast-1.amazonaws.com',
-        port: '',
-        pathname: '/home/**',
       },
     ],
   },

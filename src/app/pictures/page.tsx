@@ -4,23 +4,24 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import { useState, useEffect } from "react";
 
-const PHOTOS_FOLDER = "/img/prewed";
-const LANDSCAPE_PHOTO_COUNT = 7;
-const PORTRAIT_PHOTO_COUNT = 26;
+type Photo = {
+  src: string;
+  alt: string;
+  orientation: "landscape" | "portrait";
+};
 
-const landscapePhotos = Array.from({ length: LANDSCAPE_PHOTO_COUNT }, (_, i) => ({
-  src: `${PHOTOS_FOLDER}/landscape/prewed-${i + 1}.JPG`,
-  alt: `Adristi and Fadhriga landscape ${i + 1}`,
-  orientation: "landscape" as const,
-}));
-
-const portraitPhotos = Array.from({ length: PORTRAIT_PHOTO_COUNT }, (_, i) => ({
-  src: `${PHOTOS_FOLDER}/portrait/prewed-${i + 1}.JPG`,
-  alt: `Adristi and Fadhriga portrait ${i + 1}`,
-  orientation: "portrait" as const,
-}));
-
-const allPhotos = [...landscapePhotos, ...portraitPhotos];
+const isValidPhoto = (item: unknown): item is Photo => {
+  return (
+    typeof item === "object" &&
+    item !== null &&
+    "src" in item &&
+    "alt" in item &&
+    "orientation" in item &&
+    typeof (item as Photo).src === "string" &&
+    typeof (item as Photo).alt === "string" &&
+    ((item as Photo).orientation === "landscape" || (item as Photo).orientation === "portrait")
+  );
+};
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const shuffled = [...array];
@@ -31,7 +32,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return shuffled;
 };
 
-const generateCollageLayout = (landscapeOrder: number[], portraitOrder: number[]) => {
+const generateCollageLayout = (landscapeCount: number, portraitCount: number) => {
   const items: Array<{
     photoIndex: number;
     size: string;
@@ -64,8 +65,8 @@ const generateCollageLayout = (landscapeOrder: number[], portraitOrder: number[]
     }
     
     const photoIndex = orientation === "landscape" 
-      ? landscapeOrder[landscapeIndex % landscapeOrder.length]
-      : LANDSCAPE_PHOTO_COUNT + portraitOrder[portraitIndex % portraitOrder.length];
+      ? landscapeIndex % landscapeCount
+      : landscapeCount + (portraitIndex % portraitCount);
     
     items.push({
       photoIndex,
@@ -114,12 +115,37 @@ export default function Pictures() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [collageLayout, setCollageLayout] = useState<ReturnType<typeof generateCollageLayout>>([]);
+  const [allPhotos, setAllPhotos] = useState<Photo[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const landscapeOrder = shuffleArray(Array.from({ length: LANDSCAPE_PHOTO_COUNT }, (_, i) => i));
-    const portraitOrder = shuffleArray(Array.from({ length: PORTRAIT_PHOTO_COUNT }, (_, i) => i));
-    setCollageLayout(generateCollageLayout(landscapeOrder, portraitOrder));
-    setIsMounted(true);
+    const fetchPhotos = async () => {
+      try {
+        const response = await fetch("/api/photos");
+        if (!response.ok) {
+          throw new Error("Failed to fetch");
+        }
+        
+        const data = await response.json();
+        
+        const landscapeData = Array.isArray(data.landscape) ? data.landscape.filter(isValidPhoto) : [];
+        const portraitData = Array.isArray(data.portrait) ? data.portrait.filter(isValidPhoto) : [];
+        
+        const landscape = shuffleArray(landscapeData);
+        const portrait = shuffleArray(portraitData);
+        const photos = [...landscape, ...portrait] as Photo[];
+        
+        setAllPhotos(photos);
+        setCollageLayout(generateCollageLayout(landscape.length, portrait.length));
+        setIsMounted(true);
+      } catch (error) {
+        console.error("Failed to load photos");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPhotos();
   }, []);
 
   const openLightbox = (index: number) => {
@@ -155,7 +181,7 @@ export default function Pictures() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImage]);
+  }, [selectedImage, allPhotos.length]);
 
   const getSizeClasses = (size: string) => {
     const baseClasses = "absolute";
@@ -176,7 +202,7 @@ export default function Pictures() {
     return { top: `${topOffset}px`, left: `${leftOffset}px` };
   };
 
-  if (!isMounted || collageLayout.length === 0) {
+  if (!isMounted || collageLayout.length === 0 || isLoading) {
     return (
       <div className="h-screen bg-rose-50 dark:bg-zinc-900">
         <Header />
@@ -202,6 +228,8 @@ export default function Pictures() {
                 >
                   {collageLayout.map((item, idx) => {
                     const photo = allPhotos[item.photoIndex];
+                    if (!photo) return null;
+                    
                     const position = getPosition(item.row, item.col);
                     
                     return (
