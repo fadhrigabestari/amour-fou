@@ -1,11 +1,12 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
+  output: "standalone",
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "d8guwbw7auosl.cloudfront.net",
+        hostname: process.env.NEXT_PUBLIC_CLOUDFRONT_URL?.replace("https://", "") || "",
       },
     ],
   },
